@@ -1,12 +1,15 @@
 # Time Limit Exceeded
 
 import sys
+import time
 
 
 def is_prime(n: int):
     if n == 1:
         return False
-    for i in range(2, n):
+    elif n % 2 == 0 and n != 2:
+        return False
+    for i in range(2, (n+1)//2):
         if n % i == 0:
             return False
     return True
@@ -16,40 +19,40 @@ def is_jenny(n: int):
     if is_prime(n) is False:
         return False
 
-    # check if next odd number is prime
-    if n % 2 == 0:
-        if is_prime(n+1) is False:
-            return False
-    else:
-        if is_prime(n+2) is False:
+    if is_prime(n+2) is False:
+        if n != 2:
             return False
 
     n_str = str(n)
-    for i in range(1, len(n_str)):
-        for j in range(i):
-            if n_str[i] == n_str[j]:
-                return False  # repeated digits
+    for i in range(len(n_str)):
+        if n_str.count(n_str[i]) > 1:
+            return False
 
     return True
 
 
 for line in sys.stdin:
-    line = line.rstrip('\n')
+    start_time = time.time()
+    line = line.rstrip('\n').split()
 
     try:
-        d = int(line[0])  # this use of indices doesn't even consider d being two digits
-        i = int(line[2])  # IndexError on first line
+        d = int(line[0])
+        i = int(line[1])  # IndexError on first line
         result_exists = False
         count = 0
-        for n in range(10 ** (d - 1), 10 ** d):
+        n = 10 ** (d - 1)  # start
+        while n <= 10 ** d:
             if is_jenny(n):
                 count += 1
                 if count == i:
                     print(n)
                     result_exists = True
+                    print("Runtime (s): " + str(time.time() - start_time))
                     break
+            n += 1
         if result_exists is False:
             print("Brice doesn't stand a chance!")
+            print("Runtime (s): " + str(time.time() - start_time))
 
     except IndexError:
         pass
